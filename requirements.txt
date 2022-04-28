@@ -1,0 +1,6 @@
+keyboard
+playsound==1.2.2
+pyjokes
+pyttsx3
+SpeechRecognition
+tk
