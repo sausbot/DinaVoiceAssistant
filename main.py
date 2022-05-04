@@ -31,10 +31,10 @@ class VoiceAssist:
         self.main_screen()
 
     def init_sounds(self):
-        self.rain = multiprocessing.Process(target=playsound, args=("rain_sounds.wav",))
-        self.meditate = multiprocessing.Process(target=playsound, args=("meditation.wav",))
-        self.lullaby = multiprocessing.Process(target=playsound, args=("lullaby.wav",))
-        self.story = multiprocessing.Process(target=playsound, args=("dino_story.wav",))
+        self.rain = multiprocessing.Process(target=playsound, args=("assets/rain_sounds.wav",))
+        self.meditate = multiprocessing.Process(target=playsound, args=("assets/meditation.wav",))
+        self.lullaby = multiprocessing.Process(target=playsound, args=("assets/lullaby.wav",))
+        self.story = multiprocessing.Process(target=playsound, args=("assets/dino_story.wav",))
     
     def speak(self, text):
         self.engine.say(text)
@@ -59,13 +59,13 @@ class VoiceAssist:
         text = ''
 
         with sr.Microphone() as source: 
-            playsound("assistant_on.wav")
+            playsound("assets/assistant_on.wav")
             print("Listening")
             self.label1.configure(image = self.img_2)
             self.label1.image = self.img_2 # keep a reference!
             r.adjust_for_ambient_noise(source, duration=0.5)
             audio = r.listen(source, phrase_time_limit = 3) 
-            playsound("assistant_off.wav")
+            playsound("assets/assistant_off.wav")
             print("Done listening.") 
         try:
             text = r.recognize_google(audio, language ='en-US') 
@@ -221,17 +221,17 @@ class VoiceAssist:
             screen.title(self.assistant_name)
             screen.geometry("500x500")
             
-            icon = Image.open("bear_icon.png")
+            icon = Image.open("assets/bear_icon.png")
             icon = ImageTk.PhotoImage(icon)
             screen.iconphoto(False, icon)
 
             name_label = Label(text = f"Momify Dina Demo", width = 300, font = ("Calibri", 13))
             name_label.pack()
 
-            image = Image.open("bear.png")
+            image = Image.open("assets/bear.png")
             resize_image = image.resize((450, 450))
 
-            image_2 = Image.open("bear_listening.png")
+            image_2 = Image.open("assets/bear_listening.png")
             resize_image_2 = image_2.resize((450, 450))
 
             self.img = ImageTk.PhotoImage(resize_image)
@@ -241,13 +241,13 @@ class VoiceAssist:
             self.label1.image = self.img
             self.label1.pack()
 
-            button_img = Image.open("bear_icon.png")
+            button_img = Image.open("assets/bear_icon.png")
             resize_button_img = button_img.resize((50, 40))
             resize_button_img = ImageTk.PhotoImage(resize_button_img)
             microphone_button = Button(image=resize_button_img, command = self.process_audio)
             microphone_button.pack(pady=10)
 
-            settings_photo = PhotoImage(file = "settings.png")
+            settings_photo = PhotoImage(file = "assets/settings.png")
             settings_button = Button(image=settings_photo, command = self.change_name_window)
             settings_button.pack(pady=10)
             
