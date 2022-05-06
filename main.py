@@ -20,7 +20,7 @@ class VoiceAssist:
         self.user_name = self.name_file.read()
 
         self.engine = pyttsx3.init('sapi5')  
-        self.engine.setProperty("rate", 180)
+        self.engine.setProperty("rate", 210)
         voices = self.engine.getProperty('voices') 
         self.engine.setProperty('voice', voices[2].id)
 
@@ -31,17 +31,26 @@ class VoiceAssist:
         self.main_screen()
 
     def init_sounds(self):
+        """
+        Set up sounds to play in multiprocess
+        """
         self.rain = multiprocessing.Process(target=playsound, args=("assets/rain_sounds.wav",))
         self.meditate = multiprocessing.Process(target=playsound, args=("assets/meditation.wav",))
         self.lullaby = multiprocessing.Process(target=playsound, args=("assets/lullaby.wav",))
         self.story = multiprocessing.Process(target=playsound, args=("assets/dino_story.wav",))
     
     def speak(self, text):
+        """
+        To have the voice assistant speak out loud
+        """
         self.engine.say(text)
         print(self.assistant_name + " : "  +  text)
         self.engine.runAndWait() 
 
     def greet_me(self):
+        """
+        Change the greeting based on the time
+        """
         hour=datetime.datetime.now().hour
 
         if hour >= 0 and hour < 12:
@@ -54,6 +63,9 @@ class VoiceAssist:
         self.speak("How can I help you?")
 
     def get_audio(self): 
+        """
+        Return audio input as text or empty string if no text is heard or an exception occurs
+        """
         r = sr.Recognizer() 
         audio = '' 
         text = ''
@@ -79,6 +91,9 @@ class VoiceAssist:
         return text
             
     def date(self):
+        """
+        Voice interface says the date in spoken format
+        """
         now = datetime.datetime.now()
         month_name = now.month
         day_name = now.day
@@ -88,6 +103,9 @@ class VoiceAssist:
         self.speak("Today is "+ month_names[month_name-1] +" " + ordinalnames[day_name-1] + '.')
 
     def play_sound(self, sound):
+        """
+        Select and start sound to play based on input string
+        """
         if sound == "lullaby":
             self.lullaby.start()
         elif sound == "meditation":
@@ -98,6 +116,9 @@ class VoiceAssist:
             self.story.start()
 
     def stop_sound(self):
+        """
+        Stop multiprocess sounds and re-init process
+        """
         for proc in [self.lullaby, self.meditate, self.rain, self.story]:
             try:
                 proc.terminate()
@@ -110,13 +131,16 @@ class VoiceAssist:
         self.init_sounds()
 
     def process_audio(self):
+        """
+        Voice assistant speaks based on the statement returned from get_audio()
+        """
         run = 1
         while run==1: 
             statement = self.get_audio().lower()
             results = ''
             run += 1
 
-            if "hello" in statement or "hi" in statement or "hey" in statement:
+            if "hello" in statement or "hey" in statement:
                 self.greet_me()               
 
             elif "goodbye" in statement or "shutdown" in statement or "turn off" in statement:
@@ -168,6 +192,27 @@ class VoiceAssist:
             
             elif statement == "stop sounds":
                 self.speak("Ok stopping the sounds now!")
+            
+            # TODO: can automate with webscraping to pull from reliable websites
+            # info here is from https://www.parents.com/baby/sleep/basics/sleep-training-methods/
+            elif "sleep training" in statement:
+                self.speak("Of course, I'm here to help you with sleep training. I can tell you about the fading method \
+                    the pick-up-put-down method, the chair method, the cry-it-out method, and the ferber method. \
+                        Which do you want to learn more about?")
+            
+            elif "ferber method" in statement:
+                self.speak("Parents respond to their baby's cries at set time intervals, \
+                    which gradually increase each night. Eventually, the baby will learn to \
+                        self-soothe and fall asleep independently through 'Ferberization'. \
+                            Do you want to learn more about this?")
+            
+            elif "fading method" in statement:
+                self.speak("With the fading sleep training method, parents rely on soothing techniques\
+                     to help their baby fall asleep. These include feeding, rocking, snuggling, reading \
+                         books, or singing lullabies. As your baby grows, they'll naturally become less \
+                             needy, letting you slowly 'fade out' of the nighttime routine. Fading is \
+                                 considered a gentle sleep training method. And good news, I can help you automate this! \
+                                     Do you want to learn more?")
             
             else:
                 self.speak("I don't know that yet, but I'm still learning")
